@@ -1,0 +1,103 @@
+User.objects.create_user('User1')
+<User: User1>
+User.objects.create_user('User2')
+<User: User2>
+Author.objects.create(author_id=1)
+<Author: Author object (1)>
+Author.objects.create(author_id=2)
+<Author: Author object (2)>
+
+Category.objects.create(themes='SP')
+<Category: Category object (1)>
+Category.objects.create(themes='CL')
+<Category: Category object (2)>
+Category.objects.create(themes='IT')
+<Category: Category object (3)>
+Category.objects.create(themes='EC')
+<Category: Category object (4)>
+
+author1 = Author.objects.get(pk=1)
+author2 = Author.objects.get(pk=2)
+Post.objects.create(view='AR', text='Природа феномена электоральной культуры является одной из новелл для отечественной философской науки, требующей всестороннего анализа и изучения, поскольку от этого зависят многие другие концептуальные проблемы, в частности, вопросы, связанные с развитием демократических основ российского общества.', author=author1, title='Культура речи')
+<Post: Post object (1)>
+Post.objects.create(view='AR', text='“Cheetah” стал вторым роботом, созданным Boston Dynamics. Этот робот был разработан для бега на максимальной скорости до 45 км/ч. Он стал первым в мире роботом на четырех лапах, который развивает такую скорость. Единственным его существенным минусом было отсутствие возможности работать автономно. Поэтому в 2013 году появился автономный “WildCat” с топливным двигателем. Но его максимальная скорость была равна 26 км/ч.', author=author2, title='Роботы Boston Dynamics')
+<Post: Post object (2)>
+Post.objects.create(view='NW', text='Россия и Никарагуа подписали межправительственное соглашение о сотрудничестве в области неэнергетических применений атомной энергии в мирных целях. В рамках соглашения стороны будут вести совместную работу по широкому спектру направлений, в частности в медицине и в сельском хозяйстве — сказано в сообщении.', author=author1, title='Россия и Никарагуа договорились о сотрудничестве в области мирного атома')
+post1 = Post.objects.get(pk=1)
+post2 = Post.objects.get(pk=2)
+news1 = Post.objects.get(pk=3)
+cat_sp = Category.objects.get(pk=1)
+cat_cl = Category.objects.get(pk=2)
+cat_it = Category.objects.get(pk=3)
+cat_ec = Category.objects.get(pk=4)
+post1.categories.add(cat_cl, cat_sp)
+post2.categories.add(cat_cl, cat_it)
+news1.categories.add(cat_ec, cat_cl)
+user1 = User.objects.get(pk=2)
+user2 = User.objects.get(pk=3)
+
+comment1 = Comment.objects.create(comment_post = post1, comment_user = user1, text='Очень полезная статья, автору респект!')
+comment2 = Comment.objects.create(comment_post = post1, comment_user = user2, text='Спасибо автору, узнал много нового!')
+comment3 = Comment.objects.create(comment_post = post2, comment_user = user1, text='Почему статья не полная? Скиньте ссылку на полный материал, очень интересно!')
+comment4 = Comment.objects.create(comment_post = post2, comment_user = user2, text='Спасибо за материал, ждем еще!!')
+comment5 = Comment.objects.create(comment_post = news1, comment_user = user1, text='В Никарагуа была атомная энергетика???')
+comment6 = Comment.objects.create(comment_post = news1, comment_user = user2, text='Что за новости, дайте источник')
+
+post1.like()
+post1.like()
+post1.like()
+post1.dislike()
+post2.like()
+post2.like()
+post2.like()
+post2.like()
+post2.like()
+post2.like()
+post2.like()
+post2.like()
+post2.like()
+post2.dislike()
+news1.like()
+news1.like()
+post2.like()
+
+Author.objects.create(author_id=3)
+author3 = Author.objects.get(id=3)
+Post.objects.create(view='AR', text='Приобщение себя к определенной культуре, распредмечивание и присвоение культурных предметов и деятельностей помогают сформировать общность знаний коммуникантов, обеспечивая возможность общения, т.е. обмена телами знаков, ассоциируемых с одинаковыми ментальными образами.', author = author3, title = 'Новая статья')
+post4 = Post.objects.get(id=4)
+cat_sp = Category.objects.get(pk=1)
+cat_cl = Category.objects.get(pk=2)
+post4.categories.add(cat_cl, cat_sp)
+post4.like()
+post4.like()
+comment7 = Comment.objects.create(comment_post = post4, comment_user = user3, text='Спасибо за статью')
+comment7.like()
+
+Author.objects.get(pk=2).update_rating()
+Author.objects.get(pk=2).update_rating()
+Author.objects.get(pk=3).update_rating()
+
+best_author = Author.objects.order_by('-rating_author').first()
+best_author
+<Author: Author object (2)>
+best_user = User.objects.get(pk=best_author.author_id)
+best_user
+<User: User1>
+message = {'The best: ' + best_user.username: 'with_rating: ' + str(best_author.rating_author)}
+message
+{'The best: User1': 'with_rating: 29'}
+
+best_post = Post.objects.order_by('-rating_post').first()
+best_post_author = Author.objects.get(pk=best_post.author_id)
+best_post_user = User.objects.get(pk= best_post_author.author_id)
+
+message_best_post = {
+'date create: ': best_post.time_in,
+'username: ': best_post_user.username,
+'post rating: ': best_post.rating_post,
+'title: ': best_post.title,
+'text:' : best_post.text,
+}
+
+best_post.comment_set.all().values('time_in', 'comment_user__username', 'rating_comment', 'text')
+best_post.preview()
